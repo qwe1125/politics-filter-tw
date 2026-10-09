@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Politics Filter TW</string>
+    <string name="accessibility_description">Reads visible social-feed text locally to detect political subject matter.</string>
+</resources>
