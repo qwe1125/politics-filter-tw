@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Politics Filter TW",
+  "version": "0.1.0",
+  "description": "Hide political content from supported social feeds.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://www.threads.net/*",
+    "https://threads.net/*",
+    "https://x.com/*",
+    "https://www.facebook.com/*",
+    "https://www.youtube.com/*"
+  ],
+  "action": {
+    "default_title": "Politics Filter TW",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.threads.net/*",
+        "https://threads.net/*",
+        "https://x.com/*",
+        "https://www.facebook.com/*",
+        "https://www.youtube.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
