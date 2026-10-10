@@ -40,6 +40,14 @@ test("finds one Facebook media post without selecting the surrounding feed", () 
   assert.deepEqual(facebookAdapter.findPosts(root), [card]);
 });
 
+test("uses a stable Facebook profile path for an author whitelist", () => {
+  globalThis.location = new URL("https://www.facebook.com/");
+  const link = { href: "https://www.facebook.com/groups/932656640229711/user/100000493838819/?tracking=ignored" };
+  const heading = { closest: () => link };
+  const card = { querySelector: () => heading };
+  assert.equal(facebookAdapter.getAuthor(card), "/groups/932656640229711/user/100000493838819");
+});
+
 test("finds independent YouTube video cards and excludes an ad lockup", () => {
   globalThis.location = new URL("https://www.youtube.com/watch?v=example");
   const card = (href, text, parent = null) => ({

@@ -10,7 +10,10 @@ Local-first side project for hiding political content from social feeds. The pro
 - X initial adapter awaiting live-page validation
 - Local Taiwan political-content rule classifier with a categorized, 143-phrase lexicon
 - Low / Medium / Nuclear filter strength
-- Per-post reveal button and debug score
+- Per-post reveal and local false-positive exception buttons
+- Persistent author whitelist with popup removal control
+- Debug score and matched terms
+- Daily and browser-session hide counts in the popup
 - Android Accessibility prototype scaffold
 
 ## Workspace
@@ -38,8 +41,13 @@ After `pnpm build`:
 5. Open `https://www.threads.com/`, `https://www.youtube.com/`, or `https://www.facebook.com/` and test the feed, search results, and recommendations.
 
 After rebuilding, reload the extension card at `chrome://extensions`, then
-refresh open Threads tabs. The extension classifies visible text locally;
+refresh open social-site tabs. The extension classifies visible text locally;
 text that exists only inside images is not yet recognized.
+
+The "This is not political content" action keeps an exception for that post's
+text on this device (up to 500 recent exceptions). The popup can clear these
+exceptions and remove authors from the whitelist. Counts record posts hidden
+by this browser, and the session count resets when the browser starts.
 
 ## Principles
 - Local-first classification where possible.

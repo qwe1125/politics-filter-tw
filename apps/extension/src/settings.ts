@@ -4,12 +4,16 @@ export interface Settings {
   enabled: boolean;
   strength: FilterStrength;
   debug: boolean;
+  trustedAuthors: string[];
+  allowedPosts: string[];
 }
 
 export const defaultSettings: Settings = {
   enabled: true,
   strength: "medium",
-  debug: false
+  debug: false,
+  trustedAuthors: [],
+  allowedPosts: []
 };
 
 export async function loadSettings(): Promise<Settings> {

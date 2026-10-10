@@ -4,7 +4,12 @@ export const xAdapter: FeedAdapter = {
   id: "x",
   matches: (hostname) => hostname === "x.com" || hostname === "www.x.com",
   findPosts: (root) => Array.from(root.querySelectorAll<HTMLElement>('article[data-testid="tweet"]')),
-  getText: (post) => post.innerText.replace(/\s+/g, " ").trim()
+  getText: (post) => post.innerText.replace(/\s+/g, " ").trim(),
+  getAuthor(post) {
+    const link = post.querySelector<HTMLAnchorElement>('a[href^="/"]');
+    return link && /^\/[A-Za-z0-9_]{1,15}\/?$/.test(new URL(link.href).pathname)
+      ? new URL(link.href).pathname.toLowerCase() : null;
+  }
 };
 
 export const facebookAdapter: FeedAdapter = {
@@ -35,7 +40,16 @@ export const facebookAdapter: FeedAdapter = {
 
     return [...cards];
   },
-  getText: (post) => post.innerText.replace(/\s+/g, " ").trim()
+  getText: (post) => post.innerText.replace(/\s+/g, " ").trim(),
+  getAuthor(post) {
+    const heading = post.querySelector("h4");
+    const link = heading?.closest("a[href]") ?? heading?.querySelector("a[href]");
+    if (!link) return null;
+    const url = new URL((link as HTMLAnchorElement).href, location.href);
+    if (!url.hostname.endsWith("facebook.com")) return null;
+    if (url.pathname === "/profile.php") return url.searchParams.has("id") ? `/profile.php?id=${url.searchParams.get("id")}` : null;
+    return url.pathname.replace(/\/$/, "").toLowerCase();
+  }
 };
 
 export const youtubeAdapter: FeedAdapter = {
@@ -58,5 +72,10 @@ export const youtubeAdapter: FeedAdapter = {
       });
     });
   },
-  getText: (post) => post.innerText.replace(/\s+/g, " ").trim()
+  getText: (post) => post.innerText.replace(/\s+/g, " ").trim(),
+  getAuthor(post) {
+    const link = Array.from(post.querySelectorAll<HTMLAnchorElement>("a[href]"))
+      .find((item) => /^\/(?:@[^/]+|channel\/[^/]+|c\/[^/]+|user\/[^/]+)\/?$/.test(new URL(item.href, location.href).pathname));
+    return link ? new URL(link.href, location.href).pathname.replace(/\/$/, "").toLowerCase() : null;
+  }
 };

@@ -38,5 +38,18 @@ export const threadsAdapter: FeedAdapter = {
   },
   getText(post) {
     return post.innerText.replace(/\s+/g, " ").trim();
+  },
+  getAuthor(post) {
+    const link = Array.from(post.querySelectorAll<HTMLAnchorElement>('a[href*="/@"]'))
+      .find((item) => {
+        try {
+          const url = new URL(item.href, location.href);
+          return threadsHosts.includes(url.hostname) && /^\/@[^/]+\/?$/.test(url.pathname);
+        } catch {
+          return false;
+        }
+      });
+    if (!link) return null;
+    return new URL(link.href, location.href).pathname.replace(/\/$/, "").toLowerCase();
   }
 };
