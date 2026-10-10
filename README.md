@@ -5,7 +5,8 @@ Local-first side project for hiding political content from social feeds. The pro
 ## Current MVP
 - Chrome / Edge Manifest V3 extension
 - Threads.com feed-post and individual trending-topic adapters
-- X / Facebook / YouTube initial adapters
+- YouTube search-result and watch-page recommendation adapters
+- X / Facebook initial adapters awaiting live-page validation
 - Local Taiwan political-content rule classifier with a categorized, 143-phrase lexicon
 - Low / Medium / Nuclear filter strength
 - Per-post reveal button and debug score
@@ -33,7 +34,7 @@ After `pnpm build`:
 2. Enable Developer mode.
 3. Choose **Load unpacked**.
 4. Select `apps/extension/dist`.
-5. Open `https://www.threads.com/` and test the feed and trending topics.
+5. Open `https://www.threads.com/` or `https://www.youtube.com/` and test the feed, search results, and recommendations.
 
 After rebuilding, reload the extension card at `chrome://extensions`, then
 refresh open Threads tabs. The extension classifies visible text locally;
