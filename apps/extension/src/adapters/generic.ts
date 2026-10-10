@@ -10,7 +10,31 @@ export const xAdapter: FeedAdapter = {
 export const facebookAdapter: FeedAdapter = {
   id: "facebook",
   matches: (hostname) => hostname.includes("facebook.com"),
-  findPosts: (root) => Array.from(root.querySelectorAll<HTMLElement>('[role="article"]')),
+  findPosts(root) {
+    const articles = Array.from(root.querySelectorAll<HTMLElement>('[role="article"]'));
+    const cards = new Set(articles);
+
+    // Some Facebook feeds omit role="article". Their author is still a heading
+    // linked to a profile; climb only as far as the first complete media post.
+    for (const heading of root.querySelectorAll<HTMLElement>("h4")) {
+      if (heading.closest('[role="article"]') || !(heading.closest("a[href]") || heading.querySelector("a[href]"))) continue;
+      let candidate = heading.parentElement;
+      while (candidate && candidate !== document.body) {
+        const text = candidate.innerText?.trim() ?? "";
+        const otherText = text.length - (heading.innerText?.length ?? 0);
+        const media = candidate.querySelectorAll("img, video").length;
+        if (otherText >= 20 && media >= 2) break;
+        candidate = candidate.parentElement;
+      }
+      if (!candidate || candidate === document.body) continue;
+      const text = candidate.innerText?.trim() ?? "";
+      if (text.length > 2000 || candidate.querySelectorAll("h4").length !== 1) continue;
+      if (candidate.getBoundingClientRect().width > 900) continue;
+      cards.add(candidate);
+    }
+
+    return [...cards];
+  },
   getText: (post) => post.innerText.replace(/\s+/g, " ").trim()
 };
 

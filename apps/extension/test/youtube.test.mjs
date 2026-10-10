@@ -11,7 +11,34 @@ const output = await build({
   write: false
 });
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(output.outputFiles[0].contents).toString("base64")}`;
-const { youtubeAdapter } = await import(moduleUrl);
+const { facebookAdapter, youtubeAdapter } = await import(moduleUrl);
+
+test("finds one Facebook media post without selecting the surrounding feed", () => {
+  const feed = { innerText: "Facebook navigation and two posts" };
+  const card = {
+    innerText: "騎車環島趣 13 分鐘 下山最怕遇到 全球認證 都一個樣",
+    parentElement: feed,
+    querySelectorAll: (selector) => selector === "img, video" ? [{}, {}] : selector === "h4" ? [heading] : [],
+    getBoundingClientRect: () => ({ width: 740 })
+  };
+  const header = {
+    innerText: "騎車環島趣 13 分鐘",
+    parentElement: card,
+    querySelectorAll: () => [{}]
+  };
+  const heading = {
+    innerText: "騎車環島趣",
+    parentElement: header,
+    closest: () => null,
+    querySelector: () => ({})
+  };
+  globalThis.document = { body: feed };
+  const root = {
+    querySelectorAll: (selector) => selector === "h4" ? [heading] : []
+  };
+
+  assert.deepEqual(facebookAdapter.findPosts(root), [card]);
+});
 
 test("finds independent YouTube video cards and excludes an ad lockup", () => {
   globalThis.location = new URL("https://www.youtube.com/watch?v=example");
