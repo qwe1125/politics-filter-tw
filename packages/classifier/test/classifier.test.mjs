@@ -74,3 +74,26 @@ test("recognizes a councilor allegation in a news headline", () => {
   assert.equal(result.blocked, true);
   assert.ok(result.categories.includes("political_person"));
 });
+
+test("recognizes a political poster after local OCR extracts its words", () => {
+  const result = classify({ text: "長出貓耳朵？ 你的市長 沈伯洋", strength: "medium" });
+  assert.equal(result.blocked, true);
+  assert.ok(result.matched.some((match) => match.term === "沈伯洋"));
+});
+
+test("recognizes expanded political topics outside election headlines", () => {
+  for (const text of [
+    "黨團總召談逕付二讀與預算凍結",
+    "國安會討論台海危機與反滲透法",
+    "競選總部公布選舉公報與掃街拜票行程",
+    "行政院針對軍購案與勞保年金提出政策"
+  ]) assert.equal(classify({ text, strength: "medium" }).blocked, true, text);
+});
+
+test("new weak political words remain below medium threshold alone", () => {
+  for (const text of [
+    "今天去看國際法院題材電影",
+    "這支影片的網軍是遊戲設定",
+    "租屋補助申請教學"
+  ]) assert.equal(classify({ text, strength: "medium" }).blocked, false, text);
+});

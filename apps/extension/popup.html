@@ -8,8 +8,14 @@
 <label class="row"><span>強度</span><select id="strength"><option value="low">Low</option><option value="medium">Medium</option><option value="nuclear">Nuclear ☢️</option></select></label>
 <label class="row"><span>Debug 分數</span><input id="debug" type="checkbox"></label>
 <p id="stats">載入統計中…</p>
+<label class="row"><span>辨識圖片文字（本機 OCR）</span><input id="ocr-enabled" type="checkbox"></label>
 <h2>不隱藏的作者</h2>
 <ul id="trusted-authors"></ul>
 <button id="clear-allowed" type="button">清除「這不是政治內容」例外</button>
+<h2>漏擋回報</h2>
+<button id="report-miss" type="button">選取漏擋貼文</button>
+<p id="report-status">回報只儲存在本機，可自行匯出。</p>
+<button id="export-reports" type="button">匯出回報</button>
+<button id="clear-reports" type="button">清除回報</button>
 <script type="module" src="./popup.js"></script>
 </body></html>

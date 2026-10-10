@@ -3,7 +3,7 @@
   "name": "Politics Filter TW",
   "version": "0.1.0",
   "description": "Hide political content from supported social feeds.",
-  "permissions": ["storage"],
+  "permissions": ["storage", "offscreen"],
   "host_permissions": [
     "https://www.threads.com/*",
     "https://threads.com/*",
@@ -11,13 +11,20 @@
     "https://threads.net/*",
     "https://x.com/*",
     "https://www.facebook.com/*",
-    "https://www.youtube.com/*"
+    "https://www.youtube.com/*",
+    "https://*.fbcdn.net/*",
+    "https://*.cdninstagram.com/*",
+    "https://*.ytimg.com/*",
+    "https://*.twimg.com/*"
   ],
   "action": {
     "default_title": "Politics Filter TW",
     "default_popup": "popup.html"
   },
   "background": { "service_worker": "background.js" },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'; worker-src 'self'"
+  },
   "content_scripts": [
     {
       "matches": [

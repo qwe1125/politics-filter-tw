@@ -1,5 +1,6 @@
 import type { MatchEvidence, PoliticsCategory } from "./types.js";
 import { politicalLexicon } from "./lexicon.js";
+import { politicalFigures } from "./figures.js";
 
 export interface WeightedRule {
   term: string;
@@ -9,14 +10,16 @@ export interface WeightedRule {
 
 export const weightedRules: WeightedRule[] = (
   Object.entries(politicalLexicon) as [PoliticsCategory, readonly (readonly [string, number])[]][]
-).flatMap(([category, entries]) => entries.map(([term, weight]) => ({ term, category, weight })));
+).flatMap(([category, entries]) => entries.map(([term, weight]) => ({ term, category, weight })))
+  .concat(politicalFigures.map((term) => ({ term, category: "political_person" as const, weight: 0.65 })));
 
 const nonPoliticalContext = [
   "吃飯", "美食", "餐廳", "球賽", "棒球", "籃球", "演唱會", "穿搭", "寵物", "旅遊", "生日"
 ];
 
 const strongPoliticalContext = [
-  "宣布", "表決", "攻防", "質詢", "提案", "修法", "政策", "法案", "選舉", "罷免", "公投", "黨團"
+  "宣布", "表決", "攻防", "質詢", "提案", "修法", "政策", "法案", "選舉", "罷免", "公投", "黨團",
+  "市長", "縣長", "總統", "候選人", "競選"
 ];
 
 export function collectEvidence(text: string): MatchEvidence[] {
