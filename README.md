@@ -4,9 +4,9 @@ Local-first side project for hiding political content from social feeds. The pro
 
 ## Current MVP
 - Chrome / Edge Manifest V3 extension
-- Threads first-class adapter
+- Threads.com feed-post and individual trending-topic adapters
 - X / Facebook / YouTube initial adapters
-- Taiwan political-content rule classifier
+- Local Taiwan political-content rule classifier with a categorized, 143-phrase lexicon
 - Low / Medium / Nuclear filter strength
 - Per-post reveal button and debug score
 - Android Accessibility prototype scaffold
@@ -15,13 +15,14 @@ Local-first side project for hiding political content from social feeds. The pro
 - `packages/classifier` — shared Taiwan political-content classifier
 - `apps/extension` — browser extension
 - `apps/android` — Android prototype
-- `datasets/tw-politics` — future labeled examples / datasets
+- `datasets/tw-politics` — vocabulary notes and future labeled examples
 
 ## Develop
 Requires Node.js 20+ and pnpm 9+.
 
 ```bash
 pnpm install
+pnpm -r typecheck
 pnpm test
 pnpm build
 ```
@@ -32,7 +33,11 @@ After `pnpm build`:
 2. Enable Developer mode.
 3. Choose **Load unpacked**.
 4. Select `apps/extension/dist`.
-5. Open Threads and test the feed.
+5. Open `https://www.threads.com/` and test the feed and trending topics.
+
+After rebuilding, reload the extension card at `chrome://extensions`, then
+refresh open Threads tabs. The extension classifies visible text locally;
+text that exists only inside images is not yet recognized.
 
 ## Principles
 - Local-first classification where possible.

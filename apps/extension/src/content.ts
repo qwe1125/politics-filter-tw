@@ -7,6 +7,7 @@ import { loadSettings } from "./settings.js";
 const adapters: FeedAdapter[] = [threadsAdapter, xAdapter, facebookAdapter, youtubeAdapter];
 const adapter = adapters.find((item) => item.matches(location.hostname));
 const processed = new WeakMap<HTMLElement, string>();
+const visibleText = new WeakMap<HTMLElement, string>();
 let scheduled = false;
 
 function hashText(text: string): string {
@@ -42,12 +43,15 @@ async function scan(): Promise<void> {
   scheduled = false;
   if (!adapter) return;
   const settings = await loadSettings();
-  const posts = adapter.findPosts(document);
+  const posts = [...adapter.findPosts(document), ...(adapter.findRecommendations?.(document) ?? [])];
 
   for (const post of posts) {
-    const text = adapter.getText(post);
+    const text = post.dataset.pftwHidden === "true"
+      ? visibleText.get(post) ?? post.textContent ?? ""
+      : adapter.getText(post);
     if (text.length < 8) continue;
-    const signature = hashText(text);
+    if (post.dataset.pftwHidden !== "true") visibleText.set(post, text);
+    const signature = `${hashText(text)}:${settings.enabled}:${settings.strength}:${settings.debug}`;
     if (processed.get(post) === signature) continue;
     processed.set(post, signature);
 
@@ -57,7 +61,10 @@ async function scan(): Promise<void> {
     }
 
     const result = classify({ text, source: adapter.id as never, strength: settings.strength });
-    if (result.blocked) hide(post, result.politicalScore, settings.debug);
+    if (result.blocked) {
+      restore(post);
+      hide(post, result.politicalScore, settings.debug);
+    }
     else restore(post);
   }
 }

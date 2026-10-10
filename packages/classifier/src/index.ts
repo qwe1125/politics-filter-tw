@@ -1,5 +1,6 @@
 export * from "./types.js";
 export * from "./rules.js";
+export * from "./lexicon.js";
 
 import type { ClassifyInput, ClassifyResult, FilterStrength } from "./types.js";
 import { collectEvidence, contextAdjustment } from "./rules.js";
